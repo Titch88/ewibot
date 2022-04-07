@@ -27,6 +27,8 @@ import {
 import commons from "../static/commons.json";
 // commands imports
 import { wishBirthday } from "./commands/birthday.js";
+//admin
+import { shuffleRoleColor } from "./admin/role.js";
 
 // DB
 const file = join("db", "db.json"); // Use JSON file for storage
@@ -103,6 +105,15 @@ if (process.env.USE_SPOTIFY === "yes") {
 }
 
 const self = process.env.CLIENTID; // get self Discord Id
+
+//Test suffle color
+setTimeout(async (client, commons) => {
+  console.log("end timeout")
+  setInterval(async (client, commons) => {
+    console.log("end interval")
+    await shuffleRoleColor(client, commons)
+  }, 5000, client, commons)
+}, 3000, client, commons)
 
 // Bot event FUNCTIONS
 const onMessageHandler = async (message) => {
