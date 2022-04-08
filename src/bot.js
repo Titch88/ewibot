@@ -16,15 +16,19 @@ import { Low, JSONFile } from "lowdb";
 import { generateSpotifyClient } from "./helpers/index.js";
 
 import {
+  //message handler
   onPrivateMessage,
   onPublicMessage,
+  //reaction handler
   onRemoveReminderReaction,
   onRemoveSpotifyReaction,
+  onDMReactionHandler,
 } from "./listeners.js";
 // jsons imports
 import commons from "../static/commons.json";
 // commands imports
 import { wishBirthday } from "./commands/birthday.js";
+import { initReminder } from "./commands/reminder.js";
 
 // DB
 const file = join("db", "db.json"); // Use JSON file for storage
@@ -76,6 +80,7 @@ const client = new Client({
     Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     Intents.FLAGS.GUILD_MESSAGE_TYPING,
     Intents.FLAGS.DIRECT_MESSAGES,
+    Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
   ],
   partials: [
     "CHANNEL", // Required to receive DMs
@@ -86,6 +91,16 @@ client.playlistCachedMessages = []; // Spotify messages cache
 
 client.db = db; // db cache
 client.remindme = []; // reminders cache
+
+// Recreate older reminder supressed by bot reboot
+setTimeout(
+  async () => {
+    initReminder(client);
+    console.log("try to initiate reminders from db");
+  },
+  2000,
+  client
+);
 
 if (process.env.USE_SPOTIFY === "yes") {
   // Spotify API cache
@@ -116,13 +131,19 @@ const onMessageHandler = async (message) => {
 };
 
 const onReactionHandler = async (messageReaction) => {
-  const currentServer = commons.find(
-    ({ guildId }) => guildId === messageReaction.message.channel.guild.id
-  );
+  // Function triggered for each reaction created
+  if (messageReaction.message.channel.type === "DM") {
+    // if happening in DM
+    const currentServer = commons.find((data) => data.name === "test");
+    onDMReactionHandler(messageReaction, client, currentServer, self);
+  } else {
+    const currentServer = commons.find(
+      ({ guildId }) => guildId === messageReaction.message.guild.id
+    );
+    onRemoveSpotifyReaction(messageReaction, client, currentServer);
 
-  onRemoveSpotifyReaction(messageReaction, client, currentServer);
-
-  onRemoveReminderReaction(messageReaction, client, currentServer);
+    onRemoveReminderReaction(messageReaction, client, currentServer);
+  }
 };
 
 // Create an event listener for messages
