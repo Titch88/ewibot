@@ -114,3 +114,41 @@ export const checkIsOnThread = async (channel, threadId) => {
     : channel.threads.cache.find((x) => x.id === threadId);
   if (thread && thread.joinable) await thread.join();
 };
+
+const PMfindEmotes = (currentServer, args) => {
+  const position = args.reduce((acc, cur, idx) => {
+    if (cur.includes("--emote")) return idx; //get --emote position in args list
+    else return acc
+  }, -1);
+
+  if (position === -1) return [position, null]; // if ===-1 => no emote to find
+
+  const emotes = currentServer //get all usefull emotes
+    ? [
+      ...Object.entries(currentServer.ewilanEmotes),
+      ...Object.entries(currentServer.autoEmotes),
+    ]
+    : null;
+
+  if (emotes && args.length > position + 1) {
+    //if correct server && enough args
+    let foundEmotes = [];
+    for (const word of args.slice(position + 1)) {
+      const foundEmote = emotes.find((emote) => word.includes(emote[0])); //if not found, return undefined
+      if (foundEmote) foundEmotes = [...foundEmotes, foundEmote];
+    }
+    return [position, foundEmotes]; //return --emote position + found emotes
+  } else return [-1, []]; //if not correct serveer or not enough args
+};
+
+export const PMContent = (currentServer, args) => {
+  // prepare text to send
+  const results = PMfindEmotes(currentServer, args); //get --emote position + founded emotes, if any
+
+  const contentSliced =
+    results[0] === 0 ? args.slice(2) : args.slice(2, results[0]); //get content + remove --emote
+  const emotesToSend = results[1] === null ? "" : results[1].map((emote) => emote[1]); // fetch emotes emote
+  const content = [...contentSliced, ...emotesToSend].join(" "); // assemble text to send
+
+  return content;
+};
