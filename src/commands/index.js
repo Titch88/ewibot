@@ -13,6 +13,7 @@ import {
 } from "../helpers/index.js";
 
 import reminder from "./reminder.js";
+import { messageCount } from "./messageCount.js"
 import birthday from "./birthday.js";
 import concrete from "./concrete.js";
 import spotify from "./spotify.js";

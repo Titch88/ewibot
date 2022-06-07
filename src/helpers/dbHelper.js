@@ -102,3 +102,42 @@ const isIgnoredUser = (authorId, db) => {
 };
 
 export { addIgnoredUser, removeIgnoredUser, isIgnoredUser };
+
+// MESSAGE COUNTING
+
+const isUserMessagesCounted = (db, authorId) => {
+  return db.data.messageCount
+    .map((obj) => {
+      return obj.userId;
+    })
+    .includes(authorId);
+};
+
+const addMessageCount = (db, authorId, number) => {
+  db.data.messageCount.forEach((user) => {
+    if (user.userId === authorId) {
+      user.messageNumber += number;
+      db.wasUpdated = true;
+    }
+  })
+};
+
+const addUserMessageCount = (db, authorId, number) => {
+  if (!isUserMessagesCounted(db, authorId)) {
+    db.data.messageCount.push({ userId: authorId, messageNumber: number });
+    db.wasUpdated = true;
+  } else {
+    addMessageCount(db, authorId, number);
+  }
+};
+
+const removeUserMessageCount = (db, authorId) => {
+  if (isUserMessagesCounted(db, authorId)) {
+    db.data.messageCount = db.data.messageCount.filter(
+      ({ userId }) => userId !== authorId
+    );
+    db.wasUpdated = true;
+  }
+};
+
+export { isUserMessagesCounted, addUserMessageCount, removeUserMessageCount };

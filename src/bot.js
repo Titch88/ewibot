@@ -28,6 +28,7 @@ const commons = JSON.parse(readFileSync("static/commons.json"));
 
 // commands imports
 import { wishBirthday } from "./commands/birthday.js";
+import { sendCount } from "./commands/messageCount.js";
 
 // DB
 const file = join("db", "db.json"); // Use JSON file for storage
@@ -116,6 +117,15 @@ const onMessageHandler = async (message) => {
     const currentServer = commons.find(
       ({ guildId }) => guildId === channel.guild.id
     );
+
+    // ignoring message from himself
+    if (
+      author.id === self ||
+      !currentServer ||
+      (process.env.DEBUG === "yes" && currentServer.name === "prod")
+    )
+      return;
+
     onPublicMessage(message, client, currentServer, self);
   }
 };

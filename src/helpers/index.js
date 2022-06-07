@@ -10,6 +10,10 @@ import {
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
+  resetApologyCount,
+  isUserMessagesCounted,
+  addUserMessageCount,
+  removeUserMessageCount,
 } from "./dbHelper.js";
 
 import {
@@ -47,4 +51,8 @@ export {
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
+  resetApologyCount,
+  isUserMessagesCounted,
+  addUserMessageCount,
+  removeUserMessageCount,
 };

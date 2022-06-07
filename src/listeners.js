@@ -52,6 +52,11 @@ export const onPublicMessage = (message, client, currentServer, self) => {
 
   reactionHandler(message, currentServer, client);
 
+  if (isUserMessagesCounted(client.db, author.id)) {
+    addUserMessageCount(client.db, author.id, 1);
+    sendCount(message, PERSONNALITY.commands, client);
+  }
+
   // check for command
   const commandName = content.split(" ")[0];
   const command = commands
