@@ -2,6 +2,13 @@
   "normal": {
     "name": "normal",
     "admin": {
+      "alavirien": {
+        "author": "Membre :",
+        "description": "Un.e membre a reçu le rôle Alavirien·nes.",
+        "executor": "Ajouté par :",
+        "title": "Attribution du rôle Alavirien·nes",
+        "tooShort": "Ce message est trop petit pour être considéré comme une présentation."
+      },
       "auditLog": {
         "noExec": "Le propriétaire ou un bot.",
         "noLog": "Aucun log relatif n'a été trouvé.",
@@ -158,6 +165,13 @@
   "funny": {
     "name": "funny",
     "admin": {
+      "alavirien": {
+        "author": "Membre :",
+        "description": "Un.e membre a reçu le rôle Alavirien·nes.",
+        "executor": "Ajouté par :",
+        "title": "Attribution du rôle Alavirien·nes",
+        "tooShort": "Ce message est trop petit pour être considéré comme une présentation."
+      },
       "auditLog": {
         "noExec": "Le propriétaire ou un bot.",
         "noLog": "Aucun log relatif n'a été trouvé.",

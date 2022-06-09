@@ -10,6 +10,8 @@ import {
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
+  addAlavirien,
+  removeAlavirien,
 } from "./dbHelper.js";
 
 import {
@@ -47,4 +49,6 @@ export {
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
+  addAlavirien,
+  removeAlavirien,
 };

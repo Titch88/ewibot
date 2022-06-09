@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js";
+import { removeBirthday, removeIgnoredUser, removeAlavirien } from "../helpers/index.js";
 
 export const fetchAuditLog = async (guild, auditType) => {
   //fetch the first corresponding audit log
@@ -34,7 +35,8 @@ export const setupEmbed = (color, personality, object, type, auditPerso) => {
   const embed = new MessageEmbed()
     .setColor(color)
     .setTitle(personality.title)
-    .setDescription(personality.description);
+    .setDescription(personality.description)
+    .setTimestamp();
   if (type === "tag") {
     //add the user tag if required
     embed.addField(personality.author, object.tag, true);
@@ -73,4 +75,13 @@ export const endAdmin = (
     //if bot or author executed the kick
     finishEmbed(eventPerso, logPerso.noExec, embed, logChannel, reason);
   }
+};
+
+export const checkDB = (userId, client) => {
+  //check if user is in db for removal
+  const db = client.db;
+
+  removeBirthday(userId, db);
+  removeIgnoredUser(userId, db);
+  removeAlavirien(userId, db);
 };
