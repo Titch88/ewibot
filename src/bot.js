@@ -21,6 +21,7 @@ import {
   onReactionAdd,
   onReactionRemove,
 } from "./listeners.js";
+import { onInteractionCreate } from "./admin/listeners.js";
 
 // jsons imports
 import { readFileSync } from "fs";
@@ -125,6 +126,8 @@ client.on("messageCreate", onMessageHandler);
 
 client.on("messageReactionAdd", onReactionAdd);
 client.on("messageReactionRemove", onReactionRemove);
+
+client.on("interactionCreate", onInteractionCreate);
 
 client.once("ready", () => {
   console.log("I am ready!");
