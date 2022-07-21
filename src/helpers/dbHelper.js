@@ -1,43 +1,3 @@
-// APOLOGY COUNTING
-const isApologyUser = (authorId, db) => {
-  return db.data.apologiesCounting
-    .map((obj) => {
-      return obj.userId;
-    })
-    .includes(authorId);
-};
-
-const addApologyCount = (authorId, db) => {
-  const { apologiesCounting } = db.data;
-
-  if (isApologyUser(authorId, db)) {
-    // If already in DB, add +1 to the counter
-    for (const obj of apologiesCounting) {
-      if (obj.userId === authorId) {
-        obj.counter++;
-      }
-    }
-  } else {
-    // Else add user
-    db.data.apologiesCounting = [
-      ...db.data.apologiesCounting,
-      { userId: authorId, counter: 1 },
-    ];
-  }
-  db.wasUpdated = true;
-};
-
-const removeAppologyCount = (authorId, db) => {
-  if (isApologyUser(authorId, db)) {
-    db.data.apologiesCounting = db.data.apologiesCounting.filter(
-      (cur) => cur.userId !== authorId
-    );
-    db.wasUpdated = true;
-  }
-};
-
-export { isApologyUser, addApologyCount, removeAppologyCount };
-
 // BIRTHDAY
 const isBirthdayDate = (authorId, db) => {
   return db.data.birthdaysUsers
@@ -111,3 +71,101 @@ const isIgnoredUser = (authorId, db) => {
 };
 
 export { addIgnoredUser, removeIgnoredUser, isIgnoredUser };
+
+  //STATS
+  // {userId, stats...}
+const addStatsUser = (authorId, db) => {
+  if (!isStatsUser(authorId, db)) {
+    db.data.stats.push({ userId: authorId, apologies: 0, emotes: [], hungry: 0 })
+    db.wasUpdated = true;
+  }
+};
+
+const isStatsUser = (authorId, db) => {
+  return db.data.stats.map((obj) => {
+    return obj.userId;
+  }).includes(authorId)
+}
+
+const removeStatsUser = (authorId, db) => {
+  if (isStatsUser(authorId, db)) {
+    db.data.stats = db.data.stats.filter(
+      (cur) => cur.userId !== authorId
+    );
+    db.wasUpdated = true;
+  }
+};
+
+export { addStatsUser, removeStatsUser };
+
+const addApologyCount = (authorId, db) => {
+  //Apology count
+  const { stats } = db.data;
+
+  if (isStatsUser(authorId, db)) {
+    //If already in DB, add +1 to counter
+    for (const obj of stats) {
+      if (obj.userId === authorId) {
+        obj.apologies++;
+      }
+    }
+  } else {
+    //Else add user
+    addStatsUser(authorId, db); //add to db
+    addApologyCount(authorId, db); //add 1 to counter
+  }
+  db.wasUpdated = true;
+};
+
+const addHungryCount = (authorId, db) => {
+  //Hungry count
+  const { stats } = db.data;
+
+  if (isStatsUser(authorId, db)) {
+    //If already in DB, add +1 to counter
+    for (const obj of stats) {
+      if (obj.userId === authorId) {
+        obj.hungry++;
+      }
+    }
+  } else {
+    //Else add user
+    addStatsUser(authorId, db); //add to db
+    addHungryCount(authorId, db); //add 1 to counter
+  }
+  db.wasUpdated = true;
+}
+
+const addEmoteCount = (authorId, db, emoteId) => {
+  const stats = db.data.stats;
+  console.log("stats", stats)
+  if (isStatsUser(authorId, db)) {
+    console.log("isStatUser")
+    //[{ userId, apologies, hungry, emotes }, ...]
+    for (const obj of stats) {
+      console.log("statObj", obj)
+      if (obj.userId === authorId) {
+        //[{emoteId, count}]
+        const emotes = obj.emotes;
+
+        let flag = false; //check for emote presence in db
+        for (const emote of emotes) {
+          if (emote.emoteId === emoteId) {
+            emote.count++; //add count
+            flag = true;
+          }
+        }
+        if (!flag) {
+          obj.emotes.push({ emoteId: emoteId, count: 1 });
+        }
+      }
+    }
+  }
+  else {
+    addStatsUser(authorId, db);
+    addEmoteCount(authorId, db, emoteId);
+  }
+  db.wasUpdated = true;
+};
+
+export { addApologyCount, addHungryCount, addEmoteCount };

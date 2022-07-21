@@ -5,12 +5,13 @@ import {
   addBirthday,
   removeBirthday,
   isBirthdayDate,
-  isApologyUser,
-  addApologyCount,
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
-  removeAppologyCount,
+  removeStatsUser,
+  addApologyCount,
+  addHungryCount,
+  addEmoteCount,
 } from "./dbHelper.js";
 
 import {
@@ -21,6 +22,7 @@ import {
 
 import {
   isAdmin,
+  emojiStat,
   isCommand,
   reactionHandler,
   checkIsOnThread,
@@ -29,6 +31,7 @@ import {
 export {
   // utils
   isAdmin,
+  emojiStat,
   isCommand,
   reactionHandler,
   checkIsOnThread,
@@ -43,10 +46,11 @@ export {
   addBirthday,
   removeBirthday,
   isBirthdayDate,
-  isApologyUser,
-  addApologyCount,
   addIgnoredChannel,
   isIgnoredChannel,
   removeIgnoredChannel,
-  removeAppologyCount,
+  removeStatsUser,
+  addApologyCount,
+  addHungryCount,
+  addEmoteCount,
 };

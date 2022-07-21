@@ -8,6 +8,7 @@ import {
   reactionHandler,
   checkIsOnThread,
   deleteSongFromPlaylist,
+  emojiStat,
 } from "./helpers/index.js";
 
 import { roleAdd, roleRemove } from "./admin/role.js";
@@ -142,6 +143,11 @@ export const onReactionAdd = async (messageReaction, user) => {
   const currentServer = commons.find(
     ({ guildId }) => guildId === messageReaction.message.channel.guild.id
   );
+  //console.log("emoji", messageReaction.emoji)
+  const emote = messageReaction.emoji; //get emote
+  const emoteGuild = emote.guild ? emote.guild : null; //get emote guild
+  if (emoteGuild && currentServer.guildId === emoteGuild.id) //if is server emote &&
+    emojiStat(emote.id, user);
 
   if (currentServer.roleHandle.messageId === messageReaction.message.id)
     await roleAdd(messageReaction, currentServer, user);

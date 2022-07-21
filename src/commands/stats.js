@@ -1,22 +1,21 @@
 import { MessageEmbed } from "discord.js";
 import { PERSONALITY } from "../personality.js";
-import { removeAppologyCount } from "../helpers/index.js";
+import { removeStatsUser } from "../helpers/index.js";
 
 const action = async (message, client) => {
+  const content = message.content;
+  const words = content.split(" ");
+
+  if (words.length > 1 && words[1] === "leadApo") leadApo(message, client);
+};
+
+const leadApo = async (message, client) => {
   const db = client.db;
-  const dbData = db.data.apologiesCounting; //array of {userId, counter}
+  const dbData = db.data.stats; //array of {userId, counter}
 
   message.channel.sendTyping();
 
-  const sorted = dbData.sort((a, b) => {
-    if (a.counter < b.counter) {
-      return -1;
-    }
-    if (a.counter > b.counter) {
-      return 1;
-    }
-    return 0;
-  }); // sort users by counters
+  const sorted = dbData.sort((a, b) => a.apologies - b.apologies); // sort users by counters
 
   const guildMembers = message.guild.members;
 
@@ -36,18 +35,18 @@ const action = async (message, client) => {
       guildMember = await guildMembers.fetch(cur.userId); //get guildMember
     } catch {
       //if not found, not in serveur anymore => remove from db
-      removeAppologyCount(cur.userId, db);
+      removeStatsUser(cur.userId, db);
     }
 
-    if (guildMember && cur.counter >= 10) {
+    if (guildMember && cur.apologies >= 10) {
       //if found && enough apologies
       const userNickname = guildMember.nickname || guildMember.user.username; //get nickname
       const nickSliced = userNickname.slice(0, 25).padEnd(25, " ");
-      const line = `${nickSliced}: ${cur.counter}`; // add count to the line
+      const line = `${nickSliced}: ${cur.apologies}`; // add count to the line
 
       //separate data
-      if (cur.counter < 20) fields[0].value = `${fields[0].value}${line}\n`;
-      else if (cur.counter < 30)
+      if (cur.apologies < 20) fields[0].value = `${fields[0].value}${line}\n`;
+      else if (cur.apologies < 30)
         fields[1].value = `${fields[1].value}${line}\n`;
       else if (count >= sorted.length - 3) {
         //if top3
@@ -74,13 +73,13 @@ const action = async (message, client) => {
   message.reply({ embeds: [embed] });
 };
 
-const leaderboardApology = {
-  name: "leadApo",
+const stats = {
+  name: "stats",
   action,
   help: () => {
-    return PERSONALITY.getCommands().leaderboardApology.help;
+    return PERSONALITY.getCommands().stats.help;
   },
   admin: true,
 };
 
-export default leaderboardApology;
+export default stats;
